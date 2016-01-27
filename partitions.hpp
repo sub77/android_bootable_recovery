@@ -24,6 +24,10 @@
 #include "twrpDU.hpp"
 #include "tw_atomic.hpp"
 
+#ifdef TARGET_RECOVERY_IS_MULTIROM
+#include <list>
+#endif //TARGET_RECOVERY_IS_MULTIROM
+
 #define MAX_FSTAB_LINE_LENGTH 2048
 
 using namespace std;
@@ -46,8 +50,17 @@ public:
 	};
 
 public:
+#ifdef TARGET_RECOVERY_IS_MULTIROM
+	TWPartition(const string& fstab_line = std::string());
+	TWPartition(const TWPartition& p);
+#else
 	TWPartition();
+#endif //TARGET_RECOVERY_IS_MULTIROM
 	virtual ~TWPartition();
+
+#ifdef TARGET_RECOVERY_IS_MULTIROM
+	static TWPartition *makePartFromFstab(const char *fmt, ...);
+#endif
 
 public:
 	bool Is_Mounted();                                                        // Checks mount to see if the partition is currently mounted
@@ -74,6 +87,14 @@ public:
 	bool Flash_Image(string Filename);                                        // Flashes an image to the partition
 	void Change_Mount_Read_Only(bool new_value);                              // Changes Mount_Read_Only to new_value
 	int Check_Lifetime_Writes();
+
+#ifdef TARGET_RECOVERY_IS_MULTIROM
+	unsigned long long GetSizeUsed() { return Used; }
+	unsigned long long GetSizeFree() { return Free; }
+	unsigned long long GetSizeBackup() { return Backup_Size; }
+	unsigned long long GetSizeTotal() { return Size; }
+	unsigned long long GetSizeRaw() { return Size_Raw; }
+#endif //TARGET_RECOVERY_IS_MULTIROM
 
 public:
 	string Current_File_System;                                               // Current file system
@@ -126,6 +147,10 @@ private:
 	bool Flash_Image_DD(string Filename);                                     // Flashes an image to the partition using dd
 	bool Flash_Image_FI(string Filename);                                     // Flashes an image to the partition using flash_image for mtd nand
 
+#ifdef TARGET_RECOVERY_IS_MULTIROM
+	string Get_Mount_Options_With_Defaults();                                 // Takes Mount_Options, ensures FS-specific defaults are in it and returns it
+#endif //TARGET_RECOVERY_IS_MULTIROM
+
 private:
 	bool Can_Be_Mounted;                                                      // Indicates that the partition can be mounted
 	bool Can_Be_Wiped;                                                        // Indicates that the partition can be wiped
@@ -175,11 +200,21 @@ private:
 	bool Can_Flash_Img;                                                       // Indicates if this partition can have images flashed to it via the GUI
 	bool Mount_Read_Only;                                                     // Only mount this partition as read-only
 
+#ifdef TARGET_RECOVERY_IS_MULTIROM
+	unsigned long long Size_Raw;                                              // Total size of the underlaying partition (without fs)
+	string Bind_Of;                                                           // Path to partition which is this partition bound to
+	bool Is_ImageMount;                                                       // This is true if the partition is on .img file
+#endif //TARGET_RECOVERY_IS_MULTIROM
+
 friend class TWPartitionManager;
 friend class DataManager;
 friend class GUIPartitionList;
 friend class GUIAction;
 friend class PageManager;
+
+#ifdef TARGET_RECOVERY_IS_MULTIROM
+friend class MultiROM;
+#endif //TARGET_RECOVERY_IS_MULTIROM
 };
 
 class TWPartitionManager
@@ -239,6 +274,19 @@ public:
 	void Translate_Partition(const char* path, const char* resource_name, const char* default_value, const char* storage_resource_name, const char* storage_default_value);
 	void Translate_Partition_Display_Names();                                 // Updates display names based on translations
 
+#ifdef TARGET_RECOVERY_IS_MULTIROM
+	TWPartition* Find_Original_Partition_By_Path(string Path);				  // Returns a pointer to a partition from the lower-most context based on path
+
+	void Update_Storage_Sizes();
+
+	const std::vector<TWPartition*>& getPartitions() const { return Partitions; }
+	std::vector<TWPartition*>& getPartitions() { return Partitions; }
+	bool Push_Context();
+	void Copy_And_Push_Context();
+	bool Pop_Context();
+	bool Has_Extra_Contexts() const { return !Contexts.empty(); }
+#endif //TARGET_RECOVERY_IS_MULTIROM
+
 	TWAtomicInt stop_backup;
 
 private:
@@ -259,6 +307,14 @@ private:
 
 private:
 	std::vector<TWPartition*> Partitions;                                     // Vector list of all partitions
+
+#ifdef TARGET_RECOVERY_IS_MULTIROM
+	std::list< std::vector<TWPartition*> > Contexts;
+#endif //TARGET_RECOVERY_IS_MULTIROM
+
+#ifdef TARGET_RECOVERY_IS_MULTIROM
+friend class MultiROM;
+#endif //TARGET_RECOVERY_IS_MULTIROM
 };
 
 extern TWPartitionManager PartitionManager;
