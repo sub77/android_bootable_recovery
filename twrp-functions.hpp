@@ -34,6 +34,12 @@ typedef enum
 	rb_download,
 } RebootCommand;
 
+#ifdef TARGET_RECOVERY_IS_MULTIROM
+#ifdef HAVE_SELINUX
+struct selabel_handle;
+#endif
+#endif //TARGET_RECOVERY_IS_MULTIROM
+
 // Partition class
 class TWFunc
 {
@@ -86,6 +92,25 @@ public:
 	static void SetPerformanceMode(bool mode); // support recovery.perf.mode
 	static void Disable_Stock_Recovery_Replace(); // Disable stock ROMs from replacing TWRP with stock recovery
 	static unsigned long long IOCTL_Get_Block_Size(const char* block_device);
+
+#ifdef TARGET_RECOVERY_IS_MULTIROM
+	static int Exec_Cmd_Show_Output(const string& cmd);
+
+	static int write_file(string fn, const string& line); //write from file
+	static int write_file(string fn, const string& line, const char *mode); //write from file
+
+	static bool loadTheme();
+	static bool reloadTheme();
+	static std::string getDefaultThemePath(int rotation);
+	static std::string getZIPThemePath(int rotation);
+	static std::string getROMName();
+	static void stringReplace(std::string& str, char before, char after);
+	static void trim(std::string& str);
+	static int64_t getFreeSpace(const std::string& path);
+#ifdef HAVE_SELINUX
+	static bool restorecon(const std::string& path, struct selabel_handle *sh);
+#endif
+#endif //TARGET_RECOVERY_IS_MULTIROM
 
 private:
 	static void Copy_Log(string Source, string Destination);
