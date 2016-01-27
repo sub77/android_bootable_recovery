@@ -17,24 +17,24 @@
 #endif
 
 #include "multirom.h"
-#include "partitions.hpp"
-#include "twrp-functions.hpp"
-#include "twinstall.h"
-#include "minzip/SysUtil.h"
-#include "minzip/Zip.h"
-#include "verifier.h"
-#include "variables.h"
-#include "openrecoveryscript.hpp"
-#include "fuse_sideload.h"
+#include "../partitions.hpp"
+#include "../twrp-functions.hpp"
+#include "../twinstall.h"
+#include "../minzip/SysUtil.h"
+#include "../minzip/Zip.h"
+#include "../verifier.h"
+#include "../variables.h"
+#include "../openrecoveryscript.hpp"
+#include "../fuse_sideload.h"
 #include "multiromedify.h"
 
 extern "C" {
-#include "twcommon.h"
-#include "digest/md5.h"
+#include "../twcommon.h"
+#include "../digest/md5.h"
 #include "multirom_hooks.h"
 }
 
-#include "libblkid/include/blkid.h"
+#include "../libblkid/include/blkid.h"
 #include "cp_xattrs/libcp_xattrs.h"
 
 std::string MultiROM::m_path = "";

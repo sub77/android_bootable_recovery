@@ -9,7 +9,7 @@
 #include <errno.h>
 #include <sys/mount.h>
 
-#include "data.hpp"
+#include "../data.hpp"
 #include "mrominstaller.h"
 
 enum

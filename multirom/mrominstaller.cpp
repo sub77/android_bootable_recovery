@@ -8,15 +8,15 @@
 #define statvfs statfs
 
 #include "mrominstaller.h"
-#include "minzip/SysUtil.h"
-#include "minzip/Zip.h"
-#include "common.h"
+#include "../minzip/SysUtil.h"
+#include "../minzip/Zip.h"
+#include "../common.h"
 #include "multirom.h"
 #include "cutils/properties.h"
 
 
 extern "C" {
-#include "twcommon.h"
+#include "../twcommon.h"
 }
 
 #define INTERNAL_MEM_LOC_TXT "Internal memory"

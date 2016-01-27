@@ -3,12 +3,12 @@
 #include <ctype.h>
 
 extern "C" {
-#include "twcommon.h"
+#include "../twcommon.h"
 }
 
 #include "multiromedify.h"
-#include "twrp-functions.hpp"
-#include "partitions.hpp"
+#include "../twrp-functions.hpp"
+#include "../partitions.hpp"
 #include "multirom.h"
 
 #define NPOS std::string::npos
