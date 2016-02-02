@@ -697,6 +697,9 @@ protected:
 	std::vector<size_t> mVisibleItems; // contains indexes in mListItems of visible items only
 	std::string mVariable;
 	std::string currentValue;
+#ifdef TARGET_RECOVERY_IS_MULTIROM
+	std::string mItemsVar;
+#endif
 	ImageResource* mIconSelected;
 	ImageResource* mIconUnselected;
 	bool isCheckList;
