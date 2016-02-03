@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <cerrno>
 
 bool cp_xattrs_single_file(const std::string& from, const std::string& to);
 bool cp_xattrs_recursive(const std::string& from, const std::string& to, unsigned char type);
